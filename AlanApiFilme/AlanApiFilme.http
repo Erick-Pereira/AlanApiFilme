@@ -1,0 +1,6 @@
+@AlanApiFilme_HostAddress = http://localhost:5269
+
+GET {{AlanApiFilme_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
