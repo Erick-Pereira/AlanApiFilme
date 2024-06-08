@@ -2,7 +2,7 @@
 {
     public class FilmeDto
     {
-        public Guid ID { get; set; }
+        public string ID { get; set; }
         public string Nome { get; set; }
         public string Categoria { get; set; }
         public string Classificacao { get; set; }

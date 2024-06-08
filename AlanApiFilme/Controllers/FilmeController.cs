@@ -18,9 +18,10 @@ namespace AlanApiFilme.Controllers
         [HttpPost]
         public async Task<JsonResult> Create(FilmeDto filme)
         {
-            if (filme.ID.Equals(null) || filme.ID.Equals(0))
+            if (string.IsNullOrWhiteSpace(filme.ID))
             {
-                _db.Filme.Add(await filme.ToEntity());
+                Filme filme1 = await filme.ToEntity();
+                _db.Filme.Add(filme1);
             }
             else
             {
@@ -37,7 +38,7 @@ namespace AlanApiFilme.Controllers
         [HttpGet]
         public async Task<JsonResult> Get(string id)
         {
-            var result = await _db.Filme.FindAsync(Guid.Parse(id));
+            var result = await _db.Filme.FindAsync(Guid.Parse(id)).Result.ToDto();
             if (result == null)
             {
                 return new JsonResult(NotFound());
@@ -48,11 +49,17 @@ namespace AlanApiFilme.Controllers
         public async Task<JsonResult> GetAll()
         {
             var result = _db.Filme.ToList();
+            List<FilmeDto> list = new List<FilmeDto>();
+            for (int i = 0; i < result.Count; i++)
+            {
+                FilmeDto filme = await result[i].ToDto();
+                list.Add(filme);
+            }
             if (result == null)
             {
                 return new JsonResult(NotFound());
             }
-            return new JsonResult(Ok(result));
+            return new JsonResult(Ok(list));
         }
     }
 }
