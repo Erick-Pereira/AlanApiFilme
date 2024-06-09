@@ -1,6 +1,7 @@
 ﻿using AlanApiFilme.Model;
 using AlanApiFilme.Profiles;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AlanApiFilme.Controllers
 {
@@ -48,7 +49,7 @@ namespace AlanApiFilme.Controllers
         [HttpGet]
         public async Task<JsonResult> GetAll()
         {
-            var result = _db.Filme.ToList();
+            var result = _db.Filme.Include(f => f.Participantes).ToList();
             List<FilmeDto> list = new List<FilmeDto>();
             for (int i = 0; i < result.Count; i++)
             {

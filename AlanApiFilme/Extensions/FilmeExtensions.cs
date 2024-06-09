@@ -8,6 +8,7 @@ namespace AlanApiFilme.Profiles
     {
         private static readonly HttpClient httpClient = new HttpClient();
 
+
         public static async Task<string> GetCategoriaNomeById(Guid id)
         {
             var response = await httpClient.GetAsync($"http://localhost:8080/categoria/{id}");
@@ -24,6 +25,14 @@ namespace AlanApiFilme.Profiles
             var responseBody = await response.Content.ReadAsStringAsync();
             Classificacao classificacao = JsonSerializer.Deserialize<Classificacao>(responseBody);
             return classificacao.classificacao;
+        }
+        public static async Task<string> GetParticipanteNomeById(Guid id)
+        {
+            var response = await httpClient.GetAsync($"http://localhost:8080/participante/{id}");
+            response.EnsureSuccessStatusCode();
+            var responseBody = await response.Content.ReadAsStringAsync();
+            ParticipanteDto participante = JsonSerializer.Deserialize<ParticipanteDto>(responseBody);
+            return participante.participante;
         }
 
         public static async Task<string> GetGeneroNomeById(Guid id)
@@ -87,6 +96,23 @@ namespace AlanApiFilme.Profiles
             }
             return classificacao.id;
         }
+        public static async Task<Guid> GetParticipanteIdByNome(string nome)
+        {
+            var response = await httpClient.GetAsync($"http://localhost:8080/participantes?nome={nome}");
+            response.EnsureSuccessStatusCode();
+            var responseBody = await response.Content.ReadAsStringAsync();
+            List<ParticipanteDto> list = JsonSerializer.Deserialize<List<ParticipanteDto>>(responseBody);
+            ParticipanteDto participante = new ParticipanteDto();
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].participante == nome)
+                {
+                    participante = list[i];
+                    break;
+                }
+            }
+            return participante.id;
+        }
 
         public static async Task<Guid> GetGeneroIdByNome(string nome)
         {
@@ -143,7 +169,17 @@ namespace AlanApiFilme.Profiles
         }
         public static async Task<FilmeDto> ToDto(this Filme filme)
         {
+            List<string> participanteFilmes = new List<string>();
+            if (filme.Participantes.Count != 0 || filme.Participantes != null)
+            {
 
+                var simples = filme.Participantes.ToList();
+                for (int i = 0; i < filme.Participantes.Count; i++)
+                {
+                    string nome = await GetParticipanteNomeById(simples[i].ParticipanteID);
+                    participanteFilmes.Add(nome);
+                }
+            }
             FilmeDto filmeDto = new FilmeDto
             {
                 ID = filme.ID.ToString(),
@@ -151,6 +187,7 @@ namespace AlanApiFilme.Profiles
                 // Mapeamento dos IDs para strings, aqui você precisará consultar os nomes reais usando os IDs
                 Categoria = await GetCategoriaNomeById(filme.CategoriaID),
                 Classificacao = await GetClassificacaoNomeById(filme.ClassificacaoID),
+                Participantes = participanteFilmes,
                 Genero = await GetGeneroNomeById(filme.GeneroID),
                 Midia = await GetMidiaNomeById(filme.MidiaID),
                 TipoMidia = await GetTipoMidiaNomeById(filme.TipoMidiaID),
@@ -166,6 +203,20 @@ namespace AlanApiFilme.Profiles
             {
                 Id = Guid.Parse(filmeDto.ID);
             }
+            List<ParticipanteFilme> participanteFilmes = new List<ParticipanteFilme>();
+            for (int i = 0; i < filmeDto.Participantes.Count; i++)
+            {
+                ParticipanteFilme partFilme = new ParticipanteFilme();
+                string nome = filmeDto.Participantes[i];
+                Participante participante = new Participante();
+                participante.id = await GetParticipanteIdByNome(nome);
+                if (!string.IsNullOrWhiteSpace(participante.id.ToString()))
+                {
+                    partFilme.Participante = participante;
+                    partFilme.ParticipanteID = participante.id;
+                    participanteFilmes.Add(partFilme);
+                }
+            }
             Filme filme = new Filme
             {
                 ID = Id,
@@ -174,6 +225,7 @@ namespace AlanApiFilme.Profiles
                 CategoriaID = await GetCategoriaIdByNome(filmeDto.Categoria),
                 ClassificacaoID = await GetClassificacaoIdByNome(filmeDto.Classificacao),
                 GeneroID = await GetGeneroIdByNome(filmeDto.Genero),
+                Participantes = participanteFilmes,
                 MidiaID = await GetMidiaIdByNome(filmeDto.Midia),
                 TipoMidiaID = await GetTipoMidiaIdByNome(filmeDto.TipoMidia),
                 // Note que a propriedade Participantes não existe na classe Filme, então não há mapeamento inverso

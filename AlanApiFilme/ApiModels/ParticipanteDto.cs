@@ -1,6 +1,6 @@
 ﻿namespace AlanApiFilme.ApiModels
 {
-    public class Paricipante
+    public class ParticipanteDto
     {
         public Guid id { get; set; }
         public string participante { get; set; }
