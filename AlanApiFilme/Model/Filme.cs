@@ -6,6 +6,7 @@
         public string Nome { get; set; }
         public Guid CategoriaID { get; set; }
         public Guid ClassificacaoID { get; set; }
+        public int Valor { get; set; }
         public Guid GeneroID { get; set; }
         public Guid MidiaID { get; set; }
         public ICollection<ParticipanteFilme> Participantes { get; set; }

@@ -172,7 +172,6 @@ namespace AlanApiFilme.Profiles
             List<string> participanteFilmes = new List<string>();
             if (filme.Participantes.Count != 0 || filme.Participantes != null)
             {
-
                 var simples = filme.Participantes.ToList();
                 for (int i = 0; i < filme.Participantes.Count; i++)
                 {
@@ -191,6 +190,7 @@ namespace AlanApiFilme.Profiles
                 Genero = await GetGeneroNomeById(filme.GeneroID),
                 Midia = await GetMidiaNomeById(filme.MidiaID),
                 TipoMidia = await GetTipoMidiaNomeById(filme.TipoMidiaID),
+                Valor = filme.Valor
                 //Participantes = new List<string>() // Adicione a lógica para popular a lista de participantes
             };
             return filmeDto;
@@ -228,6 +228,7 @@ namespace AlanApiFilme.Profiles
                 Participantes = participanteFilmes,
                 MidiaID = await GetMidiaIdByNome(filmeDto.Midia),
                 TipoMidiaID = await GetTipoMidiaIdByNome(filmeDto.TipoMidia),
+                Valor = filmeDto.Valor,
                 // Note que a propriedade Participantes não existe na classe Filme, então não há mapeamento inverso
             };
             return filme;

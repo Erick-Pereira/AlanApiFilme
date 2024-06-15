@@ -39,22 +39,28 @@ namespace AlanApiFilme.Controllers
         [HttpGet]
         public async Task<JsonResult> Get(string id)
         {
-            var result = await _db.Filme.FindAsync(Guid.Parse(id)).Result.ToDto();
+            SoapClient client = new SoapClient();
+            FilmeDto result = await _db.Filme.FindAsync(Guid.Parse(id)).Result.ToDto();
             if (result == null)
             {
                 return new JsonResult(NotFound());
             }
-            return new JsonResult(Ok(result));
+            FilmeDTOView filmeDTOView = new FilmeDTOView(result);
+            filmeDTOView.ValorExtenso = await client.GetNumberInWords(filmeDTOView.Valor);
+            return new JsonResult(Ok(filmeDTOView));
         }
         [HttpGet]
         public async Task<JsonResult> GetAll()
         {
             var result = _db.Filme.Include(f => f.Participantes).ToList();
-            List<FilmeDto> list = new List<FilmeDto>();
+            List<FilmeDTOView> list = new List<FilmeDTOView>();
             for (int i = 0; i < result.Count; i++)
             {
+                SoapClient client = new SoapClient();
                 FilmeDto filme = await result[i].ToDto();
-                list.Add(filme);
+                FilmeDTOView filmeDTOView = new FilmeDTOView(filme);
+                filmeDTOView.ValorExtenso = await client.GetNumberInWords(filmeDTOView.Valor);
+                list.Add(filmeDTOView);
             }
             if (result == null)
             {

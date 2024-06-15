@@ -8,6 +8,7 @@
         public string Classificacao { get; set; }
         public string Genero { get; set; }
         public string Midia { get; set; }
+        public int Valor { get; set; }
         public List<string> Participantes { get; set; }
         public string TipoMidia { get; set; }
     }
