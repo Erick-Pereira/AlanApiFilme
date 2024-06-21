@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AlanApiFilme.Migrations
 {
     /// <inheritdoc />
-    public partial class initialmigration : Migration
+    public partial class inicio : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,6 +23,7 @@ namespace AlanApiFilme.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CategoriaID = table.Column<Guid>(type: "char(36)", unicode: false, nullable: false, collation: "ascii_general_ci"),
                     ClassificacaoID = table.Column<Guid>(type: "char(36)", unicode: false, nullable: false, collation: "ascii_general_ci"),
+                    Valor = table.Column<int>(type: "int", nullable: false),
                     GeneroID = table.Column<Guid>(type: "char(36)", unicode: false, nullable: false, collation: "ascii_general_ci"),
                     MidiaID = table.Column<Guid>(type: "char(36)", unicode: false, nullable: false, collation: "ascii_general_ci"),
                     TipoMidiaID = table.Column<Guid>(type: "char(36)", unicode: false, nullable: false, collation: "ascii_general_ci")
@@ -37,52 +38,50 @@ namespace AlanApiFilme.Migrations
                 name: "Participante",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Nome = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                    id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Participante", x => x.Id);
+                    table.PrimaryKey("PK_Participante", x => x.id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "PARTICIPANTE_FILME",
+                name: "FilmeParticipante",
                 columns: table => new
                 {
-                    FilmeID = table.Column<Guid>(type: "char(36)", unicode: false, nullable: false, collation: "ascii_general_ci"),
-                    ParticipanteID = table.Column<Guid>(type: "char(36)", unicode: false, nullable: false, collation: "ascii_general_ci")
+                    FilmesID = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Participantesid = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PARTICIPANTE_FILME", x => new { x.ParticipanteID, x.FilmeID });
+                    table.PrimaryKey("PK_FilmeParticipante", x => new { x.FilmesID, x.Participantesid });
                     table.ForeignKey(
-                        name: "FK_PARTICIPANTE_FILME_FILMES_FilmeID",
-                        column: x => x.FilmeID,
+                        name: "FK_FilmeParticipante_FILMES_FilmesID",
+                        column: x => x.FilmesID,
                         principalTable: "FILMES",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PARTICIPANTE_FILME_Participante_ParticipanteID",
-                        column: x => x.ParticipanteID,
+                        name: "FK_FilmeParticipante_Participante_Participantesid",
+                        column: x => x.Participantesid,
                         principalTable: "Participante",
-                        principalColumn: "Id",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PARTICIPANTE_FILME_FilmeID",
-                table: "PARTICIPANTE_FILME",
-                column: "FilmeID");
+                name: "IX_FilmeParticipante_Participantesid",
+                table: "FilmeParticipante",
+                column: "Participantesid");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PARTICIPANTE_FILME");
+                name: "FilmeParticipante");
 
             migrationBuilder.DropTable(
                 name: "FILMES");

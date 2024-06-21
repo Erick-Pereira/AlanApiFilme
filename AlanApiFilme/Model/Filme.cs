@@ -9,7 +9,7 @@
         public int Valor { get; set; }
         public Guid GeneroID { get; set; }
         public Guid MidiaID { get; set; }
-        public ICollection<ParticipanteFilme> Participantes { get; set; }
+        public ICollection<Participante> Participantes { get; set; }
         public Guid TipoMidiaID { get; set; }
     }
 }

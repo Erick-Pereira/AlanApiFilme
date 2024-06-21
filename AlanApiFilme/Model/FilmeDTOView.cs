@@ -3,6 +3,7 @@
     public class FilmeDTOView : FilmeDto
     {
         public string ValorExtenso { get; set; }
+
         public FilmeDTOView(FilmeDto filmeDto)
         {
             SoapClient client = new SoapClient();

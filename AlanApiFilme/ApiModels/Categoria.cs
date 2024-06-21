@@ -6,6 +6,5 @@
         public string categoria { get; set; }
         public DateTime data_insercao { get; set; }
         public DateTime data_inativavao { get; set; }
-
     }
 }

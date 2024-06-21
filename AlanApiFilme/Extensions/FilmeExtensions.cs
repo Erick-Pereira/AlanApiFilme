@@ -8,7 +8,6 @@ namespace AlanApiFilme.Profiles
     {
         private static readonly HttpClient httpClient = new HttpClient();
 
-
         public static async Task<string> GetCategoriaNomeById(Guid id)
         {
             var response = await httpClient.GetAsync($"http://localhost:8080/categoria/{id}");
@@ -26,6 +25,7 @@ namespace AlanApiFilme.Profiles
             Classificacao classificacao = JsonSerializer.Deserialize<Classificacao>(responseBody);
             return classificacao.classificacao;
         }
+
         public static async Task<string> GetParticipanteNomeById(Guid id)
         {
             var response = await httpClient.GetAsync($"http://localhost:8080/participante/{id}");
@@ -52,6 +52,7 @@ namespace AlanApiFilme.Profiles
             Midia midia = JsonSerializer.Deserialize<Midia>(responseBody);
             return midia.midia;
         }
+
         public static async Task<string> GetTipoMidiaNomeById(Guid id)
         {
             var response = await httpClient.GetAsync($"http://localhost:8080/tipomidia/{id}");
@@ -96,6 +97,7 @@ namespace AlanApiFilme.Profiles
             }
             return classificacao.id;
         }
+
         public static async Task<Guid> GetParticipanteIdByNome(string nome)
         {
             var response = await httpClient.GetAsync($"http://localhost:8080/participantes?nome={nome}");
@@ -167,6 +169,7 @@ namespace AlanApiFilme.Profiles
             }
             return tipoMidia.id;
         }
+
         public static async Task<FilmeDto> ToDto(this Filme filme)
         {
             List<string> participanteFilmes = new List<string>();
@@ -175,7 +178,7 @@ namespace AlanApiFilme.Profiles
                 var simples = filme.Participantes.ToList();
                 for (int i = 0; i < filme.Participantes.Count; i++)
                 {
-                    string nome = await GetParticipanteNomeById(simples[i].ParticipanteID);
+                    string nome = await GetParticipanteNomeById(simples[i].id);
                     participanteFilmes.Add(nome);
                 }
             }
@@ -203,18 +206,15 @@ namespace AlanApiFilme.Profiles
             {
                 Id = Guid.Parse(filmeDto.ID);
             }
-            List<ParticipanteFilme> participanteFilmes = new List<ParticipanteFilme>();
+            List<Participante> participanteFilmes = new List<Participante>();
             for (int i = 0; i < filmeDto.Participantes.Count; i++)
             {
-                ParticipanteFilme partFilme = new ParticipanteFilme();
                 string nome = filmeDto.Participantes[i];
                 Participante participante = new Participante();
                 participante.id = await GetParticipanteIdByNome(nome);
                 if (!string.IsNullOrWhiteSpace(participante.id.ToString()))
                 {
-                    partFilme.Participante = participante;
-                    partFilme.ParticipanteID = participante.id;
-                    participanteFilmes.Add(partFilme);
+                    participanteFilmes.Add(participante);
                 }
             }
             Filme filme = new Filme
@@ -233,7 +233,5 @@ namespace AlanApiFilme.Profiles
             };
             return filme;
         }
-
-
     }
 }

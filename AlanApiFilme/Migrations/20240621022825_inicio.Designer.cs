@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AlanApiFilme.Migrations
 {
     [DbContext(typeof(DataBaseDbContext))]
-    [Migration("20240609055105_Adição valor")]
-    partial class Adiçãovalor
+    [Migration("20240621022825_inicio")]
+    partial class inicio
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -75,50 +75,34 @@ namespace AlanApiFilme.Migrations
                     b.ToTable("Participante");
                 });
 
-            modelBuilder.Entity("AlanApiFilme.Model.ParticipanteFilme", b =>
+            modelBuilder.Entity("FilmeParticipante", b =>
                 {
-                    b.Property<Guid>("ParticipanteID")
-                        .IsUnicode(false)
+                    b.Property<Guid>("FilmesID")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("FilmeID")
-                        .IsUnicode(false)
+                    b.Property<Guid>("Participantesid")
                         .HasColumnType("char(36)");
 
-                    b.HasKey("ParticipanteID", "FilmeID");
+                    b.HasKey("FilmesID", "Participantesid");
 
-                    b.HasIndex("FilmeID");
+                    b.HasIndex("Participantesid");
 
-                    b.ToTable("PARTICIPANTE_FILME", (string)null);
+                    b.ToTable("FilmeParticipante");
                 });
 
-            modelBuilder.Entity("AlanApiFilme.Model.ParticipanteFilme", b =>
+            modelBuilder.Entity("FilmeParticipante", b =>
                 {
-                    b.HasOne("AlanApiFilme.Model.Filme", "Filme")
-                        .WithMany("Participantes")
-                        .HasForeignKey("FilmeID")
+                    b.HasOne("AlanApiFilme.Model.Filme", null)
+                        .WithMany()
+                        .HasForeignKey("FilmesID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AlanApiFilme.Model.Participante", "Participante")
-                        .WithMany("Filmes")
-                        .HasForeignKey("ParticipanteID")
+                    b.HasOne("AlanApiFilme.Model.Participante", null)
+                        .WithMany()
+                        .HasForeignKey("Participantesid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Filme");
-
-                    b.Navigation("Participante");
-                });
-
-            modelBuilder.Entity("AlanApiFilme.Model.Filme", b =>
-                {
-                    b.Navigation("Participantes");
-                });
-
-            modelBuilder.Entity("AlanApiFilme.Model.Participante", b =>
-                {
-                    b.Navigation("Filmes");
                 });
 #pragma warning restore 612, 618
         }
